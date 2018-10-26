@@ -5,7 +5,7 @@
 const moment = require('moment');
 const Meter = require('../../models/Meter');
 const Reading = require('../../models/Reading');
-const { log } = require('../log');
+const { log } = require('../../log');
 const demuxCsvWithSingleColumnTimestamps = require('./csvDemux');
 
 async function loadLogfileToReadings(serialNumber, ipAddress, logfile) {
