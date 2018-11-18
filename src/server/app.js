@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+const fs = require('fs');
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
@@ -18,15 +19,15 @@ const verification = require('./routes/verification');
 const groups = require('./routes/groups');
 const version = require('./routes/version');
 const obvius = require('./routes/obvius');
+const config = require('./config');
 
 const app = express();
 
-app.use(favicon(path.join(__dirname, '..', 'client', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, '..', 'client', 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '..', 'client')));
 
 app.use('/api/users', users);
 app.use('/api/meters', meters);
@@ -39,12 +40,23 @@ app.use('/api/fileProcessing', fileProcessing);
 app.use('/api/version', version);
 app.use('/api/obvius', obvius);
 
-app.get('\\/|login|admin|groups|createGroup|editGroup|graph', (req, res) => {
-	res.sendFile(path.resolve(__dirname, '..', 'client', 'index.html'));
+const router = express.Router();
+
+app.use(express.static(path.join(__dirname, '..', 'client', 'public')));
+
+router.get('/|login|admin|groups|createGroup|editGroup|graph', (req, res) => {
+//router.get('/', (req, res) => {
+	fs.readFile(path.resolve(__dirname, '..', 'client', 'index.html'), (err, html) => {
+		let htmlPlusData = html.toString().replace('BASEURL', config.baseurl);
+		res.send(htmlPlusData);
+	});
 });
 
+app.use(router);
+
 app.use((req, res) => {
-	res.status(404).send('<h1>404 Not Found<h1/>');
+	res.status(404).send('<h1>404 Not Found</h1>');
 });
+
 
 module.exports = app;

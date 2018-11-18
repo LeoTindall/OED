@@ -39,6 +39,7 @@ services:
             - OED_MAIL_FROM=mydomain@example.com
             - OED_MAIL_TO=mydomain@example.com # Set the destination address here
             - OED_MAIL_ORG=My Organization Name
+            - OED_BASEURL="http://localhost:3000"
         # Set the correct build environment.
         build: ./
         # Link to the database so the app can persist data
